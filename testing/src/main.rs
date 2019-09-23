@@ -3,11 +3,17 @@ extern crate molten;
 
 // For processing
 #[molten]
-fn test_function(arg1: usize, arg2: usize) {
-    println!("{}, something, {}", arg1, arg2);
+fn sum(value1: i64, value2: i64) -> i64 {
+    value1 + value2
+}
+
+#[molten]
+fn subtract(value1: i64, value2: i64) -> i64 {
+    value1 - value2
 }
 
 fn main() {
-   test_function(1, 2); 
+    sum(13, 2); 
+    subtract(3,2);
 }
 

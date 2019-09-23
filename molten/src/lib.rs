@@ -1,45 +1,57 @@
-extern crate syn;
 extern crate proc_macro;
+extern crate syn;
 #[macro_use]
 extern crate quote;
 
 use proc_macro::TokenStream;
+use std::collections::HashMap;
 use syn::FnArg::Typed;
 use syn::Item;
 use syn::Pat::Ident;
 
-struct FnInfo<'a, T: 'a> {
+#[derive(Debug)]
+struct FnInfo {
     fn_name: String,
-    args: Vec<Arg<'a, T>>
-}
-
-struct Arg<'a, T: 'a> {
-    arg_name: &'a str,
-    values: Vec<T>
+    args: Vec<String>,
 }
 
 #[proc_macro_attribute]
 pub fn molten(_metadata: TokenStream, input: TokenStream) -> TokenStream {
+    let mut fns: Vec<FnInfo> = vec!();
     let item: syn::Item = syn::parse(input).expect("failed to parse input");
+
     match item {
         Item::Fn(ref fn_item) => {
             let fn_struct = FnInfo {
-                                fn_name: fn_item.sig.ident.to_string(),
-                                args: fn_item.sig.inputs.iter().map(|input| 
-                                    if let Typed(typed) = input {
-                                        let pat = typed.pat;
-                                        if let Ident(pat_ident) = *pat {
-                                            let arg_name = pat_ident.ident.to_string();
-                                        }
-                                    }).collect()
-                                };
-            println!("{}", fn_item.sig.ident.to_string()); 
-        },
+                fn_name: fn_item.sig.ident.to_string(),
+                args: fn_item
+                    .sig
+                    .inputs
+                    .iter()
+                    .map(|input| {
+                        if let Typed(typed) = input {
+                            if let Ident(pat_ident) = &*typed.pat {
+                                let arg_name = pat_ident.ident.to_string();
+                                arg_name
+                            } else {
+                                eprintln!("No argument found");
+                                String::from("None")
+                            }
+                        } else {
+                            eprintln!("No function data found");
+                            String::from("None")
+                        }
+                    })
+                    .collect(),
+            };
+            fns.push(fn_struct);
+        }
         _ => {
             eprintln!("Type not currently supported.");
         }
     }
-
-    let output = quote!{ #item };
+    println!("start{:#?}", fns);
+    let output = quote! { #item };
     output.into()
 }
+

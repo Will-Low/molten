@@ -15,9 +15,10 @@ struct FnInfo {
     args: Vec<String>,
 }
 
+static mut DATA: Vec<FnInfo> = vec!();
+
 #[proc_macro_attribute]
 pub fn molten(_metadata: TokenStream, input: TokenStream) -> TokenStream {
-    let mut fns: Vec<FnInfo> = vec!();
     let item: syn::Item = syn::parse(input).expect("failed to parse input");
 
     match item {
@@ -44,13 +45,15 @@ pub fn molten(_metadata: TokenStream, input: TokenStream) -> TokenStream {
                     })
                     .collect(),
             };
-            fns.push(fn_struct);
+            unsafe {
+                DATA.push(fn_struct);
+            }
         }
         _ => {
             eprintln!("Type not currently supported.");
         }
     }
-    println!("start{:#?}", fns);
+    println!("{:#?}", DATA);
     let output = quote! { #item };
     output.into()
 }

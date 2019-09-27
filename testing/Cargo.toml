@@ -8,7 +8,8 @@ edition = "2018"
 
 [dependencies]
 # molten = { path = "../molten" }
+proc-macro2 = "1.0.4"
 
 [dependencies.syn]
 version = "1.0.5"
-features = ["parsing"]
+features = ["parsing", "full", "extra-traits"]

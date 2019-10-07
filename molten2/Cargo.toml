@@ -1,0 +1,15 @@
+[package]
+name = "run"
+version = "0.1.0"
+authors = ["William Springer <wspringer@hioscar.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "2.33.0"
+proc-macro2 = "1.0.4"
+
+[dependencies.syn]
+version = "1.0.5"
+features = ["parsing", "full", "extra-traits"]
